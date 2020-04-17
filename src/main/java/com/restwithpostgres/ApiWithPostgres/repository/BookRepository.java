@@ -11,6 +11,8 @@ import org.springframework.stereotype.Repository;
 
 import com.restwithpostgres.ApiWithPostgres.model.Book;
 
+import ch.qos.logback.classic.spi.STEUtil;
+
 @Repository
 public class BookRepository {
 	
@@ -46,6 +48,26 @@ public class BookRepository {
 		int i = jdbcTemplate.update(sql, new Object[] { book.getBook_name(), book.getAuthor_name(), book.getIsbn()});
 		System.out.println("Records inserted : "+i);
 		return i;
+	}
+	
+	public Book getBookById(int id) {
+		String sql = "SELECT * FROM books WHERE id = ?";
+		Book book = jdbcTemplate.queryForObject(sql, new Object[]{id}, new BookMapper());
+		return book;
+	}
+	
+	public int deleteBook(int id)
+	{
+		String sql = "DELETE FROM books WHERE id = ?";
+		int i = jdbcTemplate.update(sql, new Object[]{id});
+		return i;
+	}
+	
+	public int updateBook(Book book, int id)
+	{
+		String sql = "UPDATE books SET book_name = ?, author_name = ?, isbn = ? WHERE id = ? ";
+		System.out.println("book name : "+book.getBook_name());
+		return jdbcTemplate.update(sql,new Object[]{book.getBook_name(), book.getAuthor_name(), book.getIsbn(), id});
 	}
 
 }
